@@ -92,8 +92,9 @@ export const useOrchestrationStore = create<OrchestrationStore>((set) => ({
 
   clearStream: (agentId) =>
     set((state) => {
-      const { [agentId]: _, ...rest } = state.streamBuffers;
-      return { streamBuffers: rest };
+      const newBuffers = { ...state.streamBuffers };
+      delete newBuffers[agentId];
+      return { streamBuffers: newBuffers };
     }),
 
   setOrchestrating: (value) => set({ isOrchestrating: value }),

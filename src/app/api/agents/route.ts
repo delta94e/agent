@@ -12,7 +12,7 @@ const CreateAgentSchema = z.object({
 });
 
 // In-memory store (replace with Supabase when configured)
-let agents: Array<Record<string, unknown>> = [];
+const agents: Array<Record<string, unknown>> = [];
 
 const AGENT_COLORS = ['#00f5ff', '#8b5cf6', '#ff006e', '#10b981', '#f59e0b', '#3b82f6'];
 const AGENT_ICONS = ['🤖', '📊', '🛡️', '🎯', '📝', '🔬', '💡', '🧠'];

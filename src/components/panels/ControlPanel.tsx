@@ -10,7 +10,6 @@ import { AgentConfigForm } from './AgentConfigForm';
 export function ControlPanel() {
   const [showAddForm, setShowAddForm] = useState(false);
   const agents = useAgentStore((state) => state.agents);
-  const connections = useAgentStore((state) => state.connections);
   const setStatus = useAgentStore((state) => state.setStatus);
   const setConnectionActive = useAgentStore((state) => state.setConnectionActive);
   const removeAgent = useAgentStore((state) => state.removeAgent);

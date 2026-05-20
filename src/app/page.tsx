@@ -43,7 +43,10 @@ const AgentGraph = dynamic(
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   // Initialize force-directed layout (Web Worker)
   useForceLayout();

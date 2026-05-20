@@ -49,6 +49,7 @@ export function useForceLayout() {
         target: c.targetAgentId,
       })),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [agents.length, connections.length]); // Re-init when count changes
 
   const addNode = useCallback((id: string, x?: number, y?: number, z?: number) => {

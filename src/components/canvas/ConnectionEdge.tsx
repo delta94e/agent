@@ -42,6 +42,7 @@ export function ConnectionEdge({ connection }: ConnectionEdgeProps) {
     // Animate opacity for active connections
     const mat = lineObj.material as THREE.LineBasicMaterial;
     const isActive = useAgentStore.getState().connections.find((c) => c.id === connection.id)?.isActive;
+    // eslint-disable-next-line react-hooks/immutability
     mat.opacity = THREE.MathUtils.lerp(mat.opacity, isActive ? 0.6 : 0.15, 0.05);
     mat.color.set(isActive ? 0x00f5ff : 0x2a2a3e);
   });

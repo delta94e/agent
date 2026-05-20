@@ -153,7 +153,8 @@ export const useAgentStore = create<AgentStore>((set, get) => {
 
     removeAgent: (id) =>
       set((state) => {
-        const { [id]: _, ...remainingPositions } = state.positions;
+        const remainingPositions = { ...state.positions };
+        delete remainingPositions[id];
         return {
           agents: state.agents.filter((a) => a.id !== id),
           connections: state.connections.filter(
