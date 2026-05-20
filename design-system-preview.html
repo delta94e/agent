@@ -1,0 +1,2663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAOP — Design System Preview</title>
+    <meta name="description" content="Multi-Agent Orchestration Platform Design System Preview — Cyber Nexus Theme">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           DESIGN TOKENS
+           ============================================ */
+        :root {
+            /* Colors — Cyber Nexus Palette */
+            --color-bg-primary: #0a0a0f;
+            --color-bg-secondary: #12121a;
+            --color-bg-elevated: #1a1a2e;
+            --color-bg-glass: rgba(26, 26, 46, 0.65);
+            --color-bg-glass-hover: rgba(26, 26, 46, 0.85);
+            --color-surface: #16213e;
+
+            --color-accent-cyan: #00f5ff;
+            --color-accent-magenta: #ff006e;
+            --color-accent-violet: #8b5cf6;
+            --color-accent-emerald: #10b981;
+            --color-accent-amber: #f59e0b;
+            --color-accent-blue: #3b82f6;
+
+            --color-text-primary: #e2e8f0;
+            --color-text-secondary: #94a3b8;
+            --color-text-muted: #475569;
+
+            --color-border: rgba(0, 245, 255, 0.12);
+            --color-border-strong: rgba(0, 245, 255, 0.3);
+
+            /* Glow Effects */
+            --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.4), 0 0 60px rgba(0, 245, 255, 0.1);
+            --glow-cyan-strong: 0 0 20px rgba(0, 245, 255, 0.6), 0 0 60px rgba(0, 245, 255, 0.2), 0 0 100px rgba(0, 245, 255, 0.1);
+            --glow-magenta: 0 0 20px rgba(255, 0, 110, 0.4), 0 0 60px rgba(255, 0, 110, 0.1);
+            --glow-violet: 0 0 20px rgba(139, 92, 246, 0.4), 0 0 60px rgba(139, 92, 246, 0.1);
+            --glow-emerald: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 60px rgba(16, 185, 129, 0.1);
+
+            /* Typography */
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            --font-size-5xl: 3rem;
+            --font-size-6xl: 3.75rem;
+
+            /* Spacing */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+            --space-16: 64px;
+            --space-20: 80px;
+
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+
+            /* Transitions */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-in-out-sine: cubic-bezier(0.37, 0, 0.63, 1);
+            --duration-fast: 150ms;
+            --duration-normal: 300ms;
+            --duration-slow: 500ms;
+            --duration-very-slow: 1000ms;
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: rgba(0, 245, 255, 0.3);
+            color: #fff;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 245, 255, 0.2);
+            border-radius: var(--radius-full);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 245, 255, 0.4);
+        }
+
+        /* ============================================
+           ANIMATED BACKGROUND
+           ============================================ */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+        }
+
+        /* ============================================
+           LAYOUT
+           ============================================ */
+        .page-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-8) var(--space-6);
+        }
+
+        section {
+            margin-bottom: var(--space-20);
+        }
+
+        /* ============================================
+           SECTION HEADER
+           ============================================ */
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        .section-label::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--color-accent-cyan);
+            border-radius: 2px;
+            box-shadow: var(--glow-cyan);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: var(--space-4);
+            background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-desc {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-lg);
+            max-width: 700px;
+            line-height: 1.8;
+        }
+
+        .section-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--color-border-strong), transparent);
+            margin: var(--space-16) 0;
+        }
+
+        /* ============================================
+           HERO
+           ============================================ */
+        .hero {
+            text-align: center;
+            padding: var(--space-20) 0 var(--space-16);
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            background: var(--color-bg-glass);
+            border: 1px solid var(--color-border);
+            backdrop-filter: blur(20px);
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-accent-cyan);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: var(--space-8);
+            animation: fadeInDown 0.8s var(--ease-out-expo) both;
+        }
+        .hero-badge .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--color-accent-emerald);
+            border-radius: 50%;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, var(--font-size-6xl));
+            font-weight: 900;
+            letter-spacing: 2px;
+            line-height: 1.1;
+            margin-bottom: var(--space-6);
+            animation: fadeInUp 0.8s var(--ease-out-expo) 0.1s both;
+        }
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--color-accent-cyan) 0%, var(--color-accent-violet) 50%, var(--color-accent-magenta) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: var(--font-size-xl);
+            color: var(--color-text-secondary);
+            max-width: 650px;
+            margin: 0 auto var(--space-10);
+            line-height: 1.8;
+            animation: fadeInUp 0.8s var(--ease-out-expo) 0.2s both;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-12);
+            animation: fadeInUp 0.8s var(--ease-out-expo) 0.3s both;
+        }
+        .hero-stat {
+            text-align: center;
+        }
+        .hero-stat-value {
+            font-family: var(--font-display);
+            font-size: var(--font-size-4xl);
+            font-weight: 800;
+            color: var(--color-accent-cyan);
+            text-shadow: var(--glow-cyan);
+        }
+        .hero-stat-label {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: var(--space-1);
+        }
+
+        /* ============================================
+           GLASS CARD
+           ============================================ */
+        .glass-card {
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            transition: all var(--duration-normal) var(--ease-out-expo);
+        }
+        .glass-card:hover {
+            background: var(--color-bg-glass-hover);
+            border-color: var(--color-border-strong);
+            box-shadow: var(--glow-cyan);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           COLOR PALETTE
+           ============================================ */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-top: var(--space-8);
+        }
+
+        .color-swatch {
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+            transition: all var(--duration-normal) var(--ease-out-expo);
+            cursor: pointer;
+        }
+        .color-swatch:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .color-swatch-preview {
+            height: 100px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .color-swatch-preview.glow::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: inherit;
+            filter: blur(20px);
+            opacity: 0.6;
+        }
+
+        .color-swatch-info {
+            padding: var(--space-3) var(--space-4);
+            background: var(--color-bg-secondary);
+        }
+        .color-swatch-name {
+            font-family: var(--font-body);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+        .color-swatch-value {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-muted);
+            margin-top: 2px;
+        }
+
+        /* ============================================
+           TYPOGRAPHY
+           ============================================ */
+        .type-showcase {
+            margin-top: var(--space-8);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+
+        .type-row {
+            display: flex;
+            align-items: baseline;
+            gap: var(--space-8);
+            padding: var(--space-4) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .type-meta {
+            flex-shrink: 0;
+            width: 180px;
+        }
+        .type-meta-label {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-accent-cyan);
+            letter-spacing: 1px;
+        }
+        .type-meta-spec {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-muted);
+            margin-top: 2px;
+        }
+
+        .type-sample {
+            flex: 1;
+        }
+
+        .type-display {
+            font-family: var(--font-display);
+        }
+        .type-body {
+            font-family: var(--font-body);
+        }
+        .type-mono {
+            font-family: var(--font-mono);
+        }
+
+        /* ============================================
+           COMPONENT PREVIEWS
+           ============================================ */
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-6);
+            margin-top: var(--space-8);
+        }
+
+        /* Buttons */
+        .btn {
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius-md);
+            transition: all var(--duration-normal) var(--ease-out-expo);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity var(--duration-fast);
+        }
+        .btn:hover::after {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-accent-cyan), #0099aa);
+            color: var(--color-bg-primary);
+            box-shadow: 0 4px 15px rgba(0, 245, 255, 0.25);
+        }
+        .btn-primary:hover {
+            box-shadow: var(--glow-cyan-strong);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-accent-cyan);
+            border: 1px solid var(--color-accent-cyan);
+            box-shadow: inset 0 0 20px rgba(0, 245, 255, 0.05);
+        }
+        .btn-secondary:hover {
+            background: rgba(0, 245, 255, 0.1);
+            box-shadow: var(--glow-cyan);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--color-accent-magenta), #cc005a);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 0, 110, 0.25);
+        }
+        .btn-danger:hover {
+            box-shadow: var(--glow-magenta);
+            transform: translateY(-2px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--color-text-secondary);
+            padding: var(--space-2) var(--space-4);
+        }
+        .btn-ghost:hover {
+            color: var(--color-text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            background: var(--color-bg-glass);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-out-expo);
+            font-size: var(--font-size-lg);
+        }
+        .btn-icon:hover {
+            border-color: var(--color-accent-cyan);
+            color: var(--color-accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-3);
+            margin-top: var(--space-4);
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        .badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--color-accent-emerald);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .badge-active .dot {
+            background: var(--color-accent-emerald);
+            box-shadow: var(--glow-emerald);
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        .badge-processing {
+            background: rgba(0, 245, 255, 0.12);
+            color: var(--color-accent-cyan);
+            border: 1px solid rgba(0, 245, 255, 0.25);
+        }
+        .badge-processing .dot {
+            background: var(--color-accent-cyan);
+            box-shadow: var(--glow-cyan);
+            animation: pulse-dot 0.8s ease-in-out infinite;
+        }
+
+        .badge-error {
+            background: rgba(255, 0, 110, 0.12);
+            color: var(--color-accent-magenta);
+            border: 1px solid rgba(255, 0, 110, 0.25);
+        }
+        .badge-error .dot {
+            background: var(--color-accent-magenta);
+            box-shadow: var(--glow-magenta);
+        }
+
+        .badge-idle {
+            background: rgba(71, 85, 105, 0.2);
+            color: var(--color-text-muted);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+        }
+        .badge-idle .dot {
+            background: var(--color-text-muted);
+        }
+
+        .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-top: var(--space-4);
+        }
+
+        /* Input Fields */
+        .input-group {
+            margin-top: var(--space-4);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: var(--space-2);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-family: var(--font-body);
+            font-size: var(--font-size-sm);
+            outline: none;
+            transition: all var(--duration-normal) var(--ease-out-expo);
+        }
+        .input-field::placeholder {
+            color: var(--color-text-muted);
+        }
+        .input-field:focus {
+            border-color: var(--color-accent-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1), var(--glow-cyan);
+        }
+
+        .input-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .input-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        /* Custom Dropdown */
+        .custom-select {
+            position: relative;
+            width: 100%;
+            user-select: none;
+        }
+
+        .custom-select-trigger {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-family: var(--font-body);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-3);
+            transition: all var(--duration-normal) var(--ease-out-expo);
+            position: relative;
+            z-index: 2;
+        }
+        .custom-select-trigger:hover {
+            border-color: var(--color-border-strong);
+            background: var(--color-bg-secondary);
+        }
+        .custom-select.open .custom-select-trigger {
+            border-color: var(--color-accent-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1), var(--glow-cyan);
+        }
+
+        .custom-select-trigger-content {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            flex: 1;
+            min-width: 0;
+        }
+        .custom-select-trigger-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .custom-select-trigger-label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .custom-select-trigger-badge {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            flex-shrink: 0;
+        }
+
+        .custom-select-chevron {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform var(--duration-normal) var(--ease-out-expo);
+            color: var(--color-text-muted);
+        }
+        .custom-select.open .custom-select-chevron {
+            transform: rotate(180deg);
+            color: var(--color-accent-cyan);
+        }
+
+        .custom-select-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border-strong);
+            border-radius: var(--radius-md);
+            padding: var(--space-1);
+            z-index: 100;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(0, 245, 255, 0.08),
+                var(--glow-cyan);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px) scale(0.98);
+            transition: all var(--duration-normal) var(--ease-out-expo);
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        .custom-select.open .custom-select-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .custom-select-option {
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            transition: all var(--duration-fast) var(--ease-out-expo);
+            position: relative;
+        }
+        .custom-select-option:hover {
+            background: rgba(0, 245, 255, 0.08);
+        }
+        .custom-select-option.selected {
+            background: rgba(0, 245, 255, 0.12);
+        }
+        .custom-select-option.selected::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 20px;
+            background: var(--color-accent-cyan);
+            border-radius: 0 2px 2px 0;
+            box-shadow: 0 0 8px rgba(0, 245, 255, 0.6);
+        }
+
+        .custom-select-option-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .custom-select-option-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .custom-select-option-name {
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            color: var(--color-text-primary);
+            transition: color var(--duration-fast);
+        }
+        .custom-select-option:hover .custom-select-option-name {
+            color: var(--color-accent-cyan);
+        }
+        .custom-select-option.selected .custom-select-option-name {
+            color: var(--color-accent-cyan);
+        }
+        .custom-select-option-desc {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--color-text-muted);
+            margin-top: 1px;
+        }
+
+        .custom-select-option-badge {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            flex-shrink: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .custom-select-divider {
+            height: 1px;
+            background: var(--color-border);
+            margin: var(--space-1) var(--space-3);
+        }
+
+        .custom-select-header {
+            padding: var(--space-2) var(--space-4) var(--space-1);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .input-range {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-full);
+            outline: none;
+            border: 1px solid var(--color-border);
+        }
+        .input-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-accent-cyan);
+            cursor: pointer;
+            box-shadow: var(--glow-cyan);
+            border: 2px solid var(--color-bg-primary);
+        }
+
+        /* ============================================
+           AGENT CARD (Preview of 3D Node UI)
+           ============================================ */
+        .agent-card {
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            position: relative;
+            overflow: hidden;
+            transition: all var(--duration-normal) var(--ease-out-expo);
+        }
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--color-accent-cyan), transparent);
+            opacity: 0;
+            transition: opacity var(--duration-normal);
+        }
+        .agent-card:hover {
+            border-color: var(--color-border-strong);
+            transform: translateY(-2px);
+        }
+        .agent-card:hover::before {
+            opacity: 1;
+        }
+        .agent-card.active {
+            border-color: rgba(0, 245, 255, 0.4);
+            box-shadow: var(--glow-cyan);
+        }
+        .agent-card.active::before {
+            opacity: 1;
+        }
+
+        .agent-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+        }
+
+        .agent-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            position: relative;
+        }
+        .agent-avatar.cyan {
+            background: rgba(0, 245, 255, 0.15);
+            color: var(--color-accent-cyan);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+        }
+        .agent-avatar.violet {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--color-accent-violet);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .agent-avatar.magenta {
+            background: rgba(255, 0, 110, 0.15);
+            color: var(--color-accent-magenta);
+            border: 1px solid rgba(255, 0, 110, 0.3);
+        }
+        .agent-avatar.emerald {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--color-accent-emerald);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .agent-card-name {
+            font-family: var(--font-display);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .agent-card-model {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-muted);
+            margin-top: 2px;
+        }
+
+        .agent-card-body {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--space-4);
+        }
+
+        .agent-card-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3);
+        }
+        .agent-metric {
+            padding: var(--space-2) var(--space-3);
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .agent-metric-label {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .agent-metric-value {
+            font-family: var(--font-display);
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-top: 2px;
+        }
+        .agent-metric-value.cyan { color: var(--color-accent-cyan); }
+        .agent-metric-value.emerald { color: var(--color-accent-emerald); }
+        .agent-metric-value.amber { color: var(--color-accent-amber); }
+        .agent-metric-value.violet { color: var(--color-accent-violet); }
+
+        /* ============================================
+           METRICS PANEL
+           ============================================ */
+        .metrics-bar {
+            margin-top: var(--space-4);
+        }
+
+        .metric-row {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .metric-label {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .metric-bar-track {
+            flex: 1;
+            height: 6px;
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            border-radius: var(--radius-full);
+            transition: width 1s var(--ease-out-expo);
+            position: relative;
+        }
+        .metric-bar-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: inherit;
+            filter: blur(4px);
+        }
+        .metric-bar-fill.cyan {
+            background: linear-gradient(90deg, rgba(0,245,255,0.2), var(--color-accent-cyan));
+        }
+        .metric-bar-fill.violet {
+            background: linear-gradient(90deg, rgba(139,92,246,0.2), var(--color-accent-violet));
+        }
+        .metric-bar-fill.magenta {
+            background: linear-gradient(90deg, rgba(255,0,110,0.2), var(--color-accent-magenta));
+        }
+        .metric-bar-fill.emerald {
+            background: linear-gradient(90deg, rgba(16,185,129,0.2), var(--color-accent-emerald));
+        }
+
+        .metric-value {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            color: var(--color-text-primary);
+            width: 50px;
+            text-align: right;
+        }
+
+        /* ============================================
+           LOG VIEWER
+           ============================================ */
+        .log-viewer {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-4);
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            max-height: 240px;
+            overflow-y: auto;
+            margin-top: var(--space-4);
+        }
+        .log-line {
+            display: flex;
+            gap: var(--space-3);
+            padding: var(--space-1) 0;
+            line-height: 1.7;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            animation: fadeIn 0.3s var(--ease-out-expo);
+        }
+        .log-time {
+            color: var(--color-text-muted);
+            flex-shrink: 0;
+        }
+        .log-level {
+            flex-shrink: 0;
+            width: 46px;
+            text-align: center;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 10px;
+            padding: 1px 0;
+            text-transform: uppercase;
+        }
+        .log-level.info {
+            color: var(--color-accent-cyan);
+            background: rgba(0, 245, 255, 0.1);
+        }
+        .log-level.warn {
+            color: var(--color-accent-amber);
+            background: rgba(245, 158, 11, 0.1);
+        }
+        .log-level.error {
+            color: var(--color-accent-magenta);
+            background: rgba(255, 0, 110, 0.1);
+        }
+        .log-level.debug {
+            color: var(--color-text-muted);
+            background: rgba(71, 85, 105, 0.2);
+        }
+        .log-source {
+            color: var(--color-accent-violet);
+            flex-shrink: 0;
+        }
+        .log-msg {
+            color: var(--color-text-secondary);
+            flex: 1;
+        }
+
+        /* ============================================
+           SIMULATED AGENT GRAPH (2D Preview)
+           ============================================ */
+        .agent-graph-preview {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: radial-gradient(ellipse at center, rgba(0, 245, 255, 0.03) 0%, transparent 70%);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-top: var(--space-8);
+        }
+
+        .graph-node {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: var(--font-size-xs);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-out-expo);
+            z-index: 2;
+        }
+        .graph-node::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid;
+            border-color: inherit;
+            opacity: 0.3;
+            animation: pulse-ring 2s ease-out infinite;
+        }
+        .graph-node:hover {
+            transform: scale(1.15);
+        }
+
+        .graph-node.n1 {
+            top: 40%;
+            left: 45%;
+            background: rgba(0, 245, 255, 0.2);
+            border: 2px solid var(--color-accent-cyan);
+            color: var(--color-accent-cyan);
+            box-shadow: var(--glow-cyan-strong);
+            animation: float 4s ease-in-out infinite;
+        }
+        .graph-node.n2 {
+            top: 18%;
+            left: 25%;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid var(--color-accent-violet);
+            color: var(--color-accent-violet);
+            box-shadow: var(--glow-violet);
+            animation: float 4s ease-in-out 0.5s infinite;
+        }
+        .graph-node.n3 {
+            top: 20%;
+            left: 68%;
+            background: rgba(255, 0, 110, 0.2);
+            border: 2px solid var(--color-accent-magenta);
+            color: var(--color-accent-magenta);
+            box-shadow: var(--glow-magenta);
+            animation: float 4s ease-in-out 1s infinite;
+        }
+        .graph-node.n4 {
+            top: 65%;
+            left: 30%;
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid var(--color-accent-emerald);
+            color: var(--color-accent-emerald);
+            box-shadow: var(--glow-emerald);
+            animation: float 4s ease-in-out 1.5s infinite;
+        }
+        .graph-node.n5 {
+            top: 68%;
+            left: 65%;
+            background: rgba(245, 158, 11, 0.2);
+            border: 2px solid var(--color-accent-amber);
+            color: var(--color-accent-amber);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+            animation: float 4s ease-in-out 2s infinite;
+        }
+
+        .graph-node-label {
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            white-space: nowrap;
+            color: var(--color-text-secondary);
+        }
+
+        .graph-edge {
+            position: absolute;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .graph-corner-label {
+            position: absolute;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-muted);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        .graph-corner-label .dot-live {
+            width: 6px;
+            height: 6px;
+            background: var(--color-accent-emerald);
+            border-radius: 50%;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        /* ============================================
+           TOKEN STREAM
+           ============================================ */
+        .token-stream {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-4);
+            font-family: var(--font-mono);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            min-height: 60px;
+            position: relative;
+            overflow: hidden;
+            margin-top: var(--space-4);
+        }
+        .token-stream .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--color-accent-cyan);
+            margin-left: 2px;
+            animation: blink 0.8s step-end infinite;
+            vertical-align: text-bottom;
+            box-shadow: var(--glow-cyan);
+        }
+
+        .token-counter {
+            position: absolute;
+            top: var(--space-2);
+            right: var(--space-3);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--color-accent-cyan);
+            background: rgba(0, 245, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+        }
+
+        /* ============================================
+           MINI SPARKLINE
+           ============================================ */
+        .sparkline-container {
+            margin-top: var(--space-4);
+        }
+        .sparkline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: var(--space-2);
+        }
+        .sparkline-title {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .sparkline-value {
+            font-family: var(--font-display);
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+        }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 3px;
+            margin-top: var(--space-4);
+        }
+        .nav-tab {
+            flex: 1;
+            padding: var(--space-2) var(--space-4);
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-muted);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-out-expo);
+            border: none;
+            background: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nav-tab:hover {
+            color: var(--color-text-secondary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .nav-tab.active {
+            color: var(--color-accent-cyan);
+            background: var(--color-bg-elevated);
+            box-shadow: 0 0 10px rgba(0, 245, 255, 0.1);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            text-align: center;
+            padding: var(--space-16) 0 var(--space-8);
+            color: var(--color-text-muted);
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+        }
+        .footer a {
+            color: var(--color-accent-cyan);
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-shadow: var(--glow-cyan);
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+        @keyframes data-stream {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+        @keyframes glow-pulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: var(--space-4) var(--space-4);
+            }
+            .hero h1 {
+                font-size: var(--font-size-3xl);
+            }
+            .hero-stats {
+                flex-direction: column;
+                gap: var(--space-6);
+            }
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+            .color-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .type-row {
+                flex-direction: column;
+                gap: var(--space-2);
+            }
+            .type-meta {
+                width: auto;
+            }
+            .agent-graph-preview {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+    <div class="grid-overlay"></div>
+
+    <div class="page-wrapper">
+
+        <!-- ========== HERO ========== -->
+        <section class="hero">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                Design System v1.0
+            </div>
+            <h1>
+                <span class="gradient-text">MAOP</span><br>
+                Multi-Agent<br>
+                Orchestration Platform
+            </h1>
+            <p class="hero-subtitle">
+                Nền tảng điều phối đa tác vụ AI với trực quan hóa 3D thời gian thực. 
+                Setup, giám sát và quản lý mạng lưới AI agents tương tác.
+            </p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="stat-agents">0</div>
+                    <div class="hero-stat-label">Active Agents</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="stat-tokens">0</div>
+                    <div class="hero-stat-label">Tokens / min</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="stat-fps">60</div>
+                    <div class="hero-stat-label">FPS Target</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- ========== COLOR PALETTE ========== -->
+        <section id="colors">
+            <div class="section-label">01 — Colors</div>
+            <h2 class="section-title">Cyber Nexus Palette</h2>
+            <p class="section-desc">
+                Bảng màu được thiết kế cho giao diện cyberpunk/futuristic, tối ưu cho dark mode 
+                với các hiệu ứng glow và glassmorphism.
+            </p>
+
+            <div class="color-grid">
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background: #0a0a0f;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">BG Primary</div>
+                        <div class="color-swatch-value">#0a0a0f</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background: #12121a;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">BG Secondary</div>
+                        <div class="color-swatch-value">#12121a</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background: #1a1a2e;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">BG Elevated</div>
+                        <div class="color-swatch-value">#1a1a2e</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background: #16213e;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Surface</div>
+                        <div class="color-swatch-value">#16213e</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview glow" style="background: #00f5ff;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Accent Cyan</div>
+                        <div class="color-swatch-value">#00f5ff</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview glow" style="background: #ff006e;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Accent Magenta</div>
+                        <div class="color-swatch-value">#ff006e</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview glow" style="background: #8b5cf6;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Accent Violet</div>
+                        <div class="color-swatch-value">#8b5cf6</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview glow" style="background: #10b981;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Accent Emerald</div>
+                        <div class="color-swatch-value">#10b981</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview glow" style="background: #f59e0b;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Accent Amber</div>
+                        <div class="color-swatch-value">#f59e0b</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background: #e2e8f0;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Text Primary</div>
+                        <div class="color-swatch-value">#e2e8f0</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background: #94a3b8;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Text Secondary</div>
+                        <div class="color-swatch-value">#94a3b8</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background: #475569;"></div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Text Muted</div>
+                        <div class="color-swatch-value">#475569</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- ========== TYPOGRAPHY ========== -->
+        <section id="typography">
+            <div class="section-label">02 — Typography</div>
+            <h2 class="section-title">Type System</h2>
+            <p class="section-desc">
+                Ba font families phục vụ ba mục đích: Display (Orbitron) cho headings và branding, 
+                Body (Inter) cho nội dung, Mono (JetBrains Mono) cho code và data.
+            </p>
+
+            <div class="type-showcase">
+                <div class="type-row">
+                    <div class="type-meta">
+                        <div class="type-meta-label">Display / 6XL</div>
+                        <div class="type-meta-spec">Orbitron 900 · 3.75rem</div>
+                    </div>
+                    <div class="type-sample type-display" style="font-size: var(--font-size-6xl); font-weight: 900; line-height: 1.1;">
+                        MAOP
+                    </div>
+                </div>
+                <div class="type-row">
+                    <div class="type-meta">
+                        <div class="type-meta-label">Display / 4XL</div>
+                        <div class="type-meta-spec">Orbitron 700 · 2.25rem</div>
+                    </div>
+                    <div class="type-sample type-display" style="font-size: var(--font-size-4xl); font-weight: 700;">
+                        Agent Network
+                    </div>
+                </div>
+                <div class="type-row">
+                    <div class="type-meta">
+                        <div class="type-meta-label">Display / 2XL</div>
+                        <div class="type-meta-spec">Orbitron 600 · 1.5rem</div>
+                    </div>
+                    <div class="type-sample type-display" style="font-size: var(--font-size-2xl); font-weight: 600;">
+                        Orchestration Engine
+                    </div>
+                </div>
+                <div class="type-row">
+                    <div class="type-meta">
+                        <div class="type-meta-label">Body / Large</div>
+                        <div class="type-meta-spec">Inter 400 · 1.125rem</div>
+                    </div>
+                    <div class="type-sample type-body" style="font-size: var(--font-size-lg);">
+                        Giám sát và điều phối mạng lưới AI agents tương tác theo thời gian thực 
+                        với trực quan hóa 3D hiệu suất cao.
+                    </div>
+                </div>
+                <div class="type-row">
+                    <div class="type-meta">
+                        <div class="type-meta-label">Body / Base</div>
+                        <div class="type-meta-spec">Inter 400 · 1rem</div>
+                    </div>
+                    <div class="type-sample type-body" style="font-size: var(--font-size-base);">
+                        Mỗi agent node trên graph đại diện cho một AI model instance, 
+                        được cấu hình với system prompt và tham số riêng biệt.
+                    </div>
+                </div>
+                <div class="type-row">
+                    <div class="type-meta">
+                        <div class="type-meta-label">Mono / Code</div>
+                        <div class="type-meta-spec">JetBrains Mono 400 · 0.875rem</div>
+                    </div>
+                    <div class="type-sample type-mono" style="font-size: var(--font-size-sm); color: var(--color-accent-cyan);">
+                        const agent = await orchestrator.spawn({ model: "gpt-4", temp: 0.7 });
+                    </div>
+                </div>
+                <div class="type-row">
+                    <div class="type-meta">
+                        <div class="type-meta-label">Mono / Small</div>
+                        <div class="type-meta-spec">JetBrains Mono 400 · 0.75rem</div>
+                    </div>
+                    <div class="type-sample type-mono" style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                        [10:23:45] INFO agent_01 → agent_02 | tokens: 347 | latency: 1.2s
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- ========== COMPONENTS ========== -->
+        <section id="components">
+            <div class="section-label">03 — Components</div>
+            <h2 class="section-title">UI Component Library</h2>
+            <p class="section-desc">
+                Các building blocks cho Control Panel overlay. Tất cả component sử dụng 
+                glassmorphism, glow effects, và micro-animations.
+            </p>
+
+            <div class="components-grid">
+
+                <!-- Buttons -->
+                <div class="glass-card">
+                    <h3 style="font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: 600; letter-spacing: 1px; margin-bottom: var(--space-2); color: var(--color-text-primary);">BUTTONS</h3>
+                    <p style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-bottom: var(--space-2);">Interactive controls with glow hover states</p>
+                    <div class="btn-group">
+                        <button class="btn btn-primary">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                            Add Agent
+                        </button>
+                        <button class="btn btn-secondary">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                            Configure
+                        </button>
+                        <button class="btn btn-danger">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Remove
+                        </button>
+                        <button class="btn btn-ghost">Cancel</button>
+                    </div>
+                    <div class="btn-group" style="margin-top: var(--space-3);">
+                        <button class="btn-icon" title="Play">▶</button>
+                        <button class="btn-icon" title="Pause">⏸</button>
+                        <button class="btn-icon" title="Settings">⚙</button>
+                        <button class="btn-icon" title="Fullscreen">⛶</button>
+                    </div>
+                </div>
+
+                <!-- Status Badges -->
+                <div class="glass-card">
+                    <h3 style="font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: 600; letter-spacing: 1px; margin-bottom: var(--space-2); color: var(--color-text-primary);">STATUS BADGES</h3>
+                    <p style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-bottom: var(--space-2);">Agent state indicators with animated dots</p>
+                    <div class="badge-group">
+                        <span class="badge badge-active"><span class="dot"></span>Active</span>
+                        <span class="badge badge-processing"><span class="dot"></span>Processing</span>
+                        <span class="badge badge-error"><span class="dot"></span>Error</span>
+                        <span class="badge badge-idle"><span class="dot"></span>Idle</span>
+                    </div>
+                    <div class="badge-group" style="margin-top: var(--space-3);">
+                        <span class="badge badge-processing"><span class="dot"></span>Streaming</span>
+                        <span class="badge badge-active"><span class="dot"></span>Connected</span>
+                        <span class="badge badge-idle"><span class="dot"></span>Queued</span>
+                    </div>
+                </div>
+
+                <!-- Input Fields -->
+                <div class="glass-card">
+                    <h3 style="font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: 600; letter-spacing: 1px; margin-bottom: var(--space-2); color: var(--color-text-primary);">FORM INPUTS</h3>
+                    <p style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-bottom: var(--space-2);">Agent configuration form fields</p>
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <label class="input-label">Agent Name</label>
+                            <input type="text" class="input-field" placeholder="e.g. Research Analyst" value="Coaching Agent Alpha">
+                        </div>
+                        <div class="input-wrapper">
+                            <label class="input-label">Model</label>
+                            <div class="custom-select" id="model-select">
+                                <div class="custom-select-trigger" tabindex="0">
+                                    <div class="custom-select-trigger-content">
+                                        <div class="custom-select-trigger-icon" style="background: rgba(0, 245, 255, 0.12); color: var(--color-accent-cyan); border: 1px solid rgba(0, 245, 255, 0.2);">
+                                            ✦
+                                        </div>
+                                        <span class="custom-select-trigger-label">GPT-4o</span>
+                                        <span class="custom-select-trigger-badge" style="background: rgba(0, 245, 255, 0.1); color: var(--color-accent-cyan); border: 1px solid rgba(0, 245, 255, 0.2);">Latest</span>
+                                    </div>
+                                    <div class="custom-select-chevron">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="6 9 12 15 18 9"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-dropdown">
+                                    <div class="custom-select-header">OpenAI</div>
+                                    <div class="custom-select-option selected" data-value="gpt-4o" data-icon="✦" data-icon-bg="rgba(0, 245, 255, 0.12)" data-icon-color="var(--color-accent-cyan)" data-icon-border="rgba(0, 245, 255, 0.2)" data-badge="Latest" data-badge-bg="rgba(0, 245, 255, 0.1)" data-badge-color="var(--color-accent-cyan)" data-badge-border="rgba(0, 245, 255, 0.2)">
+                                        <div class="custom-select-option-icon" style="background: rgba(0, 245, 255, 0.12); color: var(--color-accent-cyan); border: 1px solid rgba(0, 245, 255, 0.2);">
+                                            ✦
+                                        </div>
+                                        <div class="custom-select-option-info">
+                                            <div class="custom-select-option-name">GPT-4o</div>
+                                            <div class="custom-select-option-desc">128k context · Vision + Audio</div>
+                                        </div>
+                                        <span class="custom-select-option-badge" style="background: rgba(0, 245, 255, 0.1); color: var(--color-accent-cyan); border: 1px solid rgba(0, 245, 255, 0.2);">Latest</span>
+                                    </div>
+                                    <div class="custom-select-option" data-value="gpt-4-turbo" data-icon="◆" data-icon-bg="rgba(139, 92, 246, 0.12)" data-icon-color="var(--color-accent-violet)" data-icon-border="rgba(139, 92, 246, 0.2)" data-badge="Stable" data-badge-bg="rgba(139, 92, 246, 0.1)" data-badge-color="var(--color-accent-violet)" data-badge-border="rgba(139, 92, 246, 0.2)">
+                                        <div class="custom-select-option-icon" style="background: rgba(139, 92, 246, 0.12); color: var(--color-accent-violet); border: 1px solid rgba(139, 92, 246, 0.2);">
+                                            ◆
+                                        </div>
+                                        <div class="custom-select-option-info">
+                                            <div class="custom-select-option-name">GPT-4 Turbo</div>
+                                            <div class="custom-select-option-desc">128k context · Vision capable</div>
+                                        </div>
+                                        <span class="custom-select-option-badge" style="background: rgba(139, 92, 246, 0.1); color: var(--color-accent-violet); border: 1px solid rgba(139, 92, 246, 0.2);">Stable</span>
+                                    </div>
+
+                                    <div class="custom-select-divider"></div>
+                                    <div class="custom-select-header">Google</div>
+                                    <div class="custom-select-option" data-value="gemini-2.5-pro" data-icon="◈" data-icon-bg="rgba(16, 185, 129, 0.12)" data-icon-color="var(--color-accent-emerald)" data-icon-border="rgba(16, 185, 129, 0.2)" data-badge="Pro" data-badge-bg="rgba(16, 185, 129, 0.1)" data-badge-color="var(--color-accent-emerald)" data-badge-border="rgba(16, 185, 129, 0.2)">
+                                        <div class="custom-select-option-icon" style="background: rgba(16, 185, 129, 0.12); color: var(--color-accent-emerald); border: 1px solid rgba(16, 185, 129, 0.2);">
+                                            ◈
+                                        </div>
+                                        <div class="custom-select-option-info">
+                                            <div class="custom-select-option-name">Gemini 2.5 Pro</div>
+                                            <div class="custom-select-option-desc">1M context · Multimodal</div>
+                                        </div>
+                                        <span class="custom-select-option-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--color-accent-emerald); border: 1px solid rgba(16, 185, 129, 0.2);">Pro</span>
+                                    </div>
+
+                                    <div class="custom-select-divider"></div>
+                                    <div class="custom-select-header">Anthropic</div>
+                                    <div class="custom-select-option" data-value="claude-opus-4" data-icon="⬡" data-icon-bg="rgba(255, 0, 110, 0.12)" data-icon-color="var(--color-accent-magenta)" data-icon-border="rgba(255, 0, 110, 0.2)" data-badge="Opus" data-badge-bg="rgba(255, 0, 110, 0.1)" data-badge-color="var(--color-accent-magenta)" data-badge-border="rgba(255, 0, 110, 0.2)">
+                                        <div class="custom-select-option-icon" style="background: rgba(255, 0, 110, 0.12); color: var(--color-accent-magenta); border: 1px solid rgba(255, 0, 110, 0.2);">
+                                            ⬡
+                                        </div>
+                                        <div class="custom-select-option-info">
+                                            <div class="custom-select-option-name">Claude Opus 4</div>
+                                            <div class="custom-select-option-desc">200k context · Advanced reasoning</div>
+                                        </div>
+                                        <span class="custom-select-option-badge" style="background: rgba(255, 0, 110, 0.1); color: var(--color-accent-magenta); border: 1px solid rgba(255, 0, 110, 0.2);">Opus</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-wrapper">
+                            <label class="input-label">Temperature: 0.7</label>
+                            <input type="range" class="input-range" min="0" max="100" value="70">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <div class="glass-card">
+                    <h3 style="font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: 600; letter-spacing: 1px; margin-bottom: var(--space-2); color: var(--color-text-primary);">NAVIGATION</h3>
+                    <p style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-bottom: var(--space-2);">Tab system for Control Panel sections</p>
+                    <div class="nav-tabs">
+                        <button class="nav-tab active">Agents</button>
+                        <button class="nav-tab">Workflows</button>
+                        <button class="nav-tab">Metrics</button>
+                        <button class="nav-tab">Logs</button>
+                    </div>
+                    <div class="nav-tabs" style="margin-top: var(--space-3);">
+                        <button class="nav-tab">Overview</button>
+                        <button class="nav-tab active">Real-time</button>
+                        <button class="nav-tab">History</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- ========== AGENT CARDS ========== -->
+        <section id="agents">
+            <div class="section-label">04 — Agent Cards</div>
+            <h2 class="section-title">Agent Node UI</h2>
+            <p class="section-desc">
+                Mỗi card đại diện cho một AI agent node. Trong ứng dụng thực tế, 
+                card này sẽ hiển thị dưới dạng HTML overlay trên 3D node.
+            </p>
+
+            <div class="components-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div class="agent-card active">
+                    <div class="agent-card-header">
+                        <div style="display: flex; align-items: center; gap: var(--space-3);">
+                            <div class="agent-avatar cyan">🤖</div>
+                            <div>
+                                <div class="agent-card-name">Coaching Agent</div>
+                                <div class="agent-card-model">GPT-4o · temp 0.7</div>
+                            </div>
+                        </div>
+                        <span class="badge badge-processing"><span class="dot"></span>Streaming</span>
+                    </div>
+                    <div class="agent-card-body">
+                        Phân tích phản hồi từ người dùng và đưa ra gợi ý coaching cá nhân hóa dựa trên context.
+                    </div>
+                    <div class="agent-card-metrics">
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Tokens</div>
+                            <div class="agent-metric-value cyan" id="metric-tokens">12,847</div>
+                        </div>
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Latency</div>
+                            <div class="agent-metric-value emerald">1.2s</div>
+                        </div>
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Messages</div>
+                            <div class="agent-metric-value amber">34</div>
+                        </div>
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Uptime</div>
+                            <div class="agent-metric-value violet">2h 14m</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-card">
+                    <div class="agent-card-header">
+                        <div style="display: flex; align-items: center; gap: var(--space-3);">
+                            <div class="agent-avatar violet">📊</div>
+                            <div>
+                                <div class="agent-card-name">Data Aggregator</div>
+                                <div class="agent-card-model">Gemini 2.5 Pro · temp 0.3</div>
+                            </div>
+                        </div>
+                        <span class="badge badge-active"><span class="dot"></span>Active</span>
+                    </div>
+                    <div class="agent-card-body">
+                        Thu thập và tổng hợp dữ liệu từ nhiều nguồn, chuẩn hóa format trước khi chuyển cho agents khác.
+                    </div>
+                    <div class="agent-card-metrics">
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Tokens</div>
+                            <div class="agent-metric-value cyan">8,421</div>
+                        </div>
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Latency</div>
+                            <div class="agent-metric-value emerald">0.8s</div>
+                        </div>
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Messages</div>
+                            <div class="agent-metric-value amber">21</div>
+                        </div>
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Uptime</div>
+                            <div class="agent-metric-value violet">2h 14m</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-card">
+                    <div class="agent-card-header">
+                        <div style="display: flex; align-items: center; gap: var(--space-3);">
+                            <div class="agent-avatar magenta">🛡️</div>
+                            <div>
+                                <div class="agent-card-name">Safety Monitor</div>
+                                <div class="agent-card-model">Claude Opus 4 · temp 0.1</div>
+                            </div>
+                        </div>
+                        <span class="badge badge-idle"><span class="dot"></span>Idle</span>
+                    </div>
+                    <div class="agent-card-body">
+                        Giám sát tất cả output từ agents khác, phát hiện nội dung vi phạm policy và trigger alerts.
+                    </div>
+                    <div class="agent-card-metrics">
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Tokens</div>
+                            <div class="agent-metric-value cyan">3,102</div>
+                        </div>
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Latency</div>
+                            <div class="agent-metric-value emerald">0.4s</div>
+                        </div>
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Messages</div>
+                            <div class="agent-metric-value amber">12</div>
+                        </div>
+                        <div class="agent-metric">
+                            <div class="agent-metric-label">Uptime</div>
+                            <div class="agent-metric-value violet">2h 14m</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- ========== AGENT GRAPH PREVIEW ========== -->
+        <section id="graph">
+            <div class="section-label">05 — 3D Graph Preview</div>
+            <h2 class="section-title">Agent Network Topology</h2>
+            <p class="section-desc">
+                Bản preview 2D của Agent Graph. Trong ứng dụng thực tế, đây sẽ là 
+                3D scene render bằng R3F với hiệu ứng Bloom và particle streaming.
+            </p>
+
+            <div class="agent-graph-preview">
+                <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0; z-index: 1;">
+                    <!-- Edges connecting nodes -->
+                    <defs>
+                        <linearGradient id="edge-gradient-1" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color: #00f5ff; stop-opacity: 0.6"/>
+                            <stop offset="100%" style="stop-color: #8b5cf6; stop-opacity: 0.6"/>
+                        </linearGradient>
+                        <linearGradient id="edge-gradient-2" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color: #00f5ff; stop-opacity: 0.6"/>
+                            <stop offset="100%" style="stop-color: #ff006e; stop-opacity: 0.6"/>
+                        </linearGradient>
+                        <linearGradient id="edge-gradient-3" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color: #00f5ff; stop-opacity: 0.6"/>
+                            <stop offset="100%" style="stop-color: #10b981; stop-opacity: 0.6"/>
+                        </linearGradient>
+                        <linearGradient id="edge-gradient-4" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color: #00f5ff; stop-opacity: 0.6"/>
+                            <stop offset="100%" style="stop-color: #f59e0b; stop-opacity: 0.6"/>
+                        </linearGradient>
+                        <linearGradient id="edge-gradient-5" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color: #8b5cf6; stop-opacity: 0.4"/>
+                            <stop offset="100%" style="stop-color: #10b981; stop-opacity: 0.4"/>
+                        </linearGradient>
+                        <linearGradient id="edge-gradient-6" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color: #ff006e; stop-opacity: 0.4"/>
+                            <stop offset="100%" style="stop-color: #f59e0b; stop-opacity: 0.4"/>
+                        </linearGradient>
+                        <filter id="edge-glow">
+                            <feGaussianBlur stdDeviation="2" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <!-- Center to Violet (top-left) -->
+                    <line x1="48%" y1="43%" x2="28%" y2="21%" stroke="url(#edge-gradient-1)" stroke-width="1.5" filter="url(#edge-glow)" opacity="0.7"/>
+                    <!-- Center to Magenta (top-right) -->
+                    <line x1="48%" y1="43%" x2="71%" y2="23%" stroke="url(#edge-gradient-2)" stroke-width="1.5" filter="url(#edge-glow)" opacity="0.7"/>
+                    <!-- Center to Emerald (bottom-left) -->
+                    <line x1="48%" y1="43%" x2="33%" y2="68%" stroke="url(#edge-gradient-3)" stroke-width="1.5" filter="url(#edge-glow)" opacity="0.7"/>
+                    <!-- Center to Amber (bottom-right) -->
+                    <line x1="48%" y1="43%" x2="68%" y2="71%" stroke="url(#edge-gradient-4)" stroke-width="1.5" filter="url(#edge-glow)" opacity="0.7"/>
+                    <!-- Violet to Emerald -->
+                    <line x1="28%" y1="21%" x2="33%" y2="68%" stroke="url(#edge-gradient-5)" stroke-width="1" filter="url(#edge-glow)" opacity="0.4"/>
+                    <!-- Magenta to Amber -->
+                    <line x1="71%" y1="23%" x2="68%" y2="71%" stroke="url(#edge-gradient-6)" stroke-width="1" filter="url(#edge-glow)" opacity="0.4"/>
+
+                    <!-- Animated particles along edges -->
+                    <circle r="3" fill="#00f5ff" opacity="0.9" filter="url(#edge-glow)">
+                        <animateMotion dur="3s" repeatCount="indefinite" path="M 480,215 L 280,105"/>
+                    </circle>
+                    <circle r="2.5" fill="#8b5cf6" opacity="0.8" filter="url(#edge-glow)">
+                        <animateMotion dur="2.5s" repeatCount="indefinite" path="M 280,105 L 480,215"/>
+                    </circle>
+                    <circle r="3" fill="#ff006e" opacity="0.9" filter="url(#edge-glow)">
+                        <animateMotion dur="3.5s" repeatCount="indefinite" path="M 480,215 L 710,115"/>
+                    </circle>
+                    <circle r="2" fill="#10b981" opacity="0.7" filter="url(#edge-glow)">
+                        <animateMotion dur="4s" repeatCount="indefinite" path="M 330,340 L 480,215"/>
+                    </circle>
+                    <circle r="2.5" fill="#f59e0b" opacity="0.8" filter="url(#edge-glow)">
+                        <animateMotion dur="3s" repeatCount="indefinite" path="M 680,355 L 480,215"/>
+                    </circle>
+                </svg>
+
+                <div class="graph-node n1">
+                    🎯
+                    <span class="graph-node-label">Orchestrator</span>
+                </div>
+                <div class="graph-node n2">
+                    📊
+                    <span class="graph-node-label">Aggregator</span>
+                </div>
+                <div class="graph-node n3">
+                    🛡️
+                    <span class="graph-node-label">Monitor</span>
+                </div>
+                <div class="graph-node n4">
+                    🤖
+                    <span class="graph-node-label">Coach</span>
+                </div>
+                <div class="graph-node n5">
+                    📝
+                    <span class="graph-node-label">Summarizer</span>
+                </div>
+
+                <div class="graph-corner-label">
+                    <span class="dot-live"></span>
+                    5 nodes · 6 edges · LIVE
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- ========== METRICS & DATA ========== -->
+        <section id="metrics">
+            <div class="section-label">06 — Metrics & Monitoring</div>
+            <h2 class="section-title">Real-time Dashboard</h2>
+            <p class="section-desc">
+                Các panel giám sát hiệu suất, token consumption, và log streaming 
+                từ toàn bộ agent network.
+            </p>
+
+            <div class="components-grid" style="grid-template-columns: 1fr 1fr;">
+                <!-- Metrics Bars -->
+                <div class="glass-card">
+                    <h3 style="font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: 600; letter-spacing: 1px; color: var(--color-text-primary);">SYSTEM METRICS</h3>
+                    <div class="metrics-bar">
+                        <div class="metric-row">
+                            <span class="metric-label">GPU Usage</span>
+                            <div class="metric-bar-track">
+                                <div class="metric-bar-fill cyan" style="width: 67%;"></div>
+                            </div>
+                            <span class="metric-value">67%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Memory</span>
+                            <div class="metric-bar-track">
+                                <div class="metric-bar-fill violet" style="width: 42%;"></div>
+                            </div>
+                            <span class="metric-value">42%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Token Rate</span>
+                            <div class="metric-bar-track">
+                                <div class="metric-bar-fill emerald" style="width: 85%;"></div>
+                            </div>
+                            <span class="metric-value">85%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Error Rate</span>
+                            <div class="metric-bar-track">
+                                <div class="metric-bar-fill magenta" style="width: 8%;"></div>
+                            </div>
+                            <span class="metric-value">8%</span>
+                        </div>
+                    </div>
+
+                    <div class="sparkline-container">
+                        <div class="sparkline-header">
+                            <span class="sparkline-title">Token Throughput</span>
+                            <span class="sparkline-value" style="color: var(--color-accent-cyan);" id="throughput-value">2,847</span>
+                        </div>
+                        <svg width="100%" height="60" viewBox="0 0 400 60" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="sparkline-fill" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" style="stop-color: #00f5ff; stop-opacity: 0.3"/>
+                                    <stop offset="100%" style="stop-color: #00f5ff; stop-opacity: 0"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M0,50 L20,45 L40,48 L60,35 L80,38 L100,25 L120,30 L140,15 L160,20 L180,12 L200,18 L220,10 L240,15 L260,8 L280,12 L300,5 L320,10 L340,3 L360,8 L380,5 L400,2 L400,60 L0,60 Z" fill="url(#sparkline-fill)"/>
+                            <polyline points="0,50 20,45 40,48 60,35 80,38 100,25 120,30 140,15 160,20 180,12 200,18 220,10 240,15 260,8 280,12 300,5 320,10 340,3 360,8 380,5 400,2" fill="none" stroke="#00f5ff" stroke-width="2" stroke-linejoin="round"/>
+                            <circle cx="400" cy="2" r="3" fill="#00f5ff" style="filter: drop-shadow(0 0 6px rgba(0,245,255,0.8));">
+                                <animate attributeName="r" values="3;5;3" dur="1.5s" repeatCount="indefinite"/>
+                            </circle>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Token Stream -->
+                <div class="glass-card">
+                    <h3 style="font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: 600; letter-spacing: 1px; color: var(--color-text-primary);">TOKEN STREAM</h3>
+                    <p style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-top: var(--space-1);">Live streaming output from Coaching Agent</p>
+                    <div class="token-stream">
+                        <span class="token-counter" id="stream-counter">347 tokens</span>
+                        <span id="streaming-text"></span><span class="cursor"></span>
+                    </div>
+
+                    <h3 style="font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: 600; letter-spacing: 1px; color: var(--color-text-primary); margin-top: var(--space-6);">SYSTEM LOG</h3>
+                    <div class="log-viewer" id="log-viewer">
+                        <div class="log-line">
+                            <span class="log-time">10:23:41</span>
+                            <span class="log-level info">INFO</span>
+                            <span class="log-source">[orchestrator]</span>
+                            <span class="log-msg">Session initialized with 5 agents</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-time">10:23:42</span>
+                            <span class="log-level info">INFO</span>
+                            <span class="log-source">[coach_01]</span>
+                            <span class="log-msg">Connected to GPT-4o endpoint</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-time">10:23:43</span>
+                            <span class="log-level debug">DBG</span>
+                            <span class="log-source">[aggregator]</span>
+                            <span class="log-msg">WebSocket handshake complete</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-time">10:23:44</span>
+                            <span class="log-level info">INFO</span>
+                            <span class="log-source">[coach_01]</span>
+                            <span class="log-msg">Streaming response → aggregator | 127 tokens</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-time">10:23:45</span>
+                            <span class="log-level warn">WARN</span>
+                            <span class="log-source">[monitor]</span>
+                            <span class="log-msg">Token rate exceeding threshold (>500/min)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-time">10:23:46</span>
+                            <span class="log-level info">INFO</span>
+                            <span class="log-source">[summarizer]</span>
+                            <span class="log-msg">Batch summary generated: 3 conversations processed</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-time">10:23:47</span>
+                            <span class="log-level error">ERR</span>
+                            <span class="log-source">[aggregator]</span>
+                            <span class="log-msg">Rate limit hit on external API, retrying in 2s...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- ========== GLASSMORPHISM ========== -->
+        <section id="glass">
+            <div class="section-label">07 — Effects & Patterns</div>
+            <h2 class="section-title">Visual Effects</h2>
+            <p class="section-desc">
+                Glassmorphism, glow effects, và animation patterns 
+                tạo nên aesthetic cyberpunk/futuristic cho toàn bộ platform.
+            </p>
+
+            <div class="components-grid" style="margin-top: var(--space-8);">
+                <!-- Glassmorphism Levels -->
+                <div style="background: linear-gradient(135deg, rgba(0,245,255,0.05), rgba(139,92,246,0.05)); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-6); position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(0,245,255,0.15) 0%, transparent 70%); pointer-events: none;"></div>
+                    <div style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%); pointer-events: none;"></div>
+                    <h3 style="font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: 600; letter-spacing: 1px; color: var(--color-text-primary); margin-bottom: var(--space-4);">GLASSMORPHISM</h3>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+                        <div style="padding: var(--space-4); background: rgba(26, 26, 46, 0.3); backdrop-filter: blur(10px); border: 1px solid rgba(0,245,255,0.08); border-radius: var(--radius-md);">
+                            <span style="font-family: var(--font-mono); font-size: var(--font-size-xs); color: var(--color-accent-cyan);">Level 1</span> — Subtle glass, blur(10px), 30% opacity
+                        </div>
+                        <div style="padding: var(--space-4); background: rgba(26, 26, 46, 0.55); backdrop-filter: blur(20px); border: 1px solid rgba(0,245,255,0.12); border-radius: var(--radius-md);">
+                            <span style="font-family: var(--font-mono); font-size: var(--font-size-xs); color: var(--color-accent-cyan);">Level 2</span> — Standard glass, blur(20px), 55% opacity
+                        </div>
+                        <div style="padding: var(--space-4); background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(30px); border: 1px solid rgba(0,245,255,0.2); border-radius: var(--radius-md);">
+                            <span style="font-family: var(--font-mono); font-size: var(--font-size-xs); color: var(--color-accent-cyan);">Level 3</span> — Heavy glass, blur(30px), 80% opacity
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Glow Effects -->
+                <div class="glass-card">
+                    <h3 style="font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: 600; letter-spacing: 1px; color: var(--color-text-primary); margin-bottom: var(--space-4);">GLOW EFFECTS</h3>
+                    <div style="display: flex; gap: var(--space-6); justify-content: center; padding: var(--space-6) 0;">
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--color-accent-cyan); box-shadow: var(--glow-cyan-strong); animation: glow-pulse 2s ease-in-out infinite;"></div>
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--color-accent-magenta); box-shadow: var(--glow-magenta); animation: glow-pulse 2s ease-in-out 0.3s infinite;"></div>
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--color-accent-violet); box-shadow: var(--glow-violet); animation: glow-pulse 2s ease-in-out 0.6s infinite;"></div>
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--color-accent-emerald); box-shadow: var(--glow-emerald); animation: glow-pulse 2s ease-in-out 0.9s infinite;"></div>
+                    </div>
+                    <p style="text-align: center; font-family: var(--font-mono); font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                        box-shadow glow + brightness pulse animation
+                    </p>
+                </div>
+
+                <!-- Border Radius -->
+                <div class="glass-card">
+                    <h3 style="font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: 600; letter-spacing: 1px; color: var(--color-text-primary); margin-bottom: var(--space-4);">BORDER RADIUS</h3>
+                    <div style="display: flex; gap: var(--space-4); align-items: end; padding: var(--space-4) 0;">
+                        <div style="text-align: center;">
+                            <div style="width: 50px; height: 50px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm);"></div>
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); margin-top: 4px; display: block;">sm · 6px</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 50px; height: 50px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md);"></div>
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); margin-top: 4px; display: block;">md · 10px</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 50px; height: 50px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg);"></div>
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); margin-top: 4px; display: block;">lg · 16px</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 50px; height: 50px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl);"></div>
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); margin-top: 4px; display: block;">xl · 24px</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 50px; height: 50px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-full);"></div>
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); margin-top: 4px; display: block;">full</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spacing Scale -->
+                <div class="glass-card">
+                    <h3 style="font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: 600; letter-spacing: 1px; color: var(--color-text-primary); margin-bottom: var(--space-4);">SPACING SCALE</h3>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                        <div style="display: flex; align-items: center; gap: var(--space-3);">
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); width: 60px;">4px</span>
+                            <div style="height: 6px; width: 4px; background: var(--color-accent-cyan); border-radius: 2px; opacity: 0.5;"></div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--space-3);">
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); width: 60px;">8px</span>
+                            <div style="height: 6px; width: 8px; background: var(--color-accent-cyan); border-radius: 2px; opacity: 0.6;"></div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--space-3);">
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); width: 60px;">16px</span>
+                            <div style="height: 6px; width: 16px; background: var(--color-accent-cyan); border-radius: 2px; opacity: 0.7;"></div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--space-3);">
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); width: 60px;">24px</span>
+                            <div style="height: 6px; width: 24px; background: var(--color-accent-cyan); border-radius: 2px; opacity: 0.8;"></div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--space-3);">
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); width: 60px;">32px</span>
+                            <div style="height: 6px; width: 32px; background: var(--color-accent-cyan); border-radius: 2px; opacity: 0.85;"></div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--space-3);">
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); width: 60px;">48px</span>
+                            <div style="height: 6px; width: 48px; background: var(--color-accent-cyan); border-radius: 2px; opacity: 0.9;"></div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--space-3);">
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); width: 60px;">64px</span>
+                            <div style="height: 6px; width: 64px; background: var(--color-accent-cyan); border-radius: 2px; opacity: 1;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== FOOTER ========== -->
+        <footer class="footer">
+            <p>
+                MAOP Design System v1.0 — Cyber Nexus Theme<br>
+                <span style="color: var(--color-text-muted);">
+                    Next.js · React Three Fiber · MUI · Zustand · Supabase
+                </span>
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+        // ============================================
+        // PARTICLE BACKGROUND
+        // ============================================
+        (function() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let animationId;
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 1.5 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.3;
+                    this.speedY = (Math.random() - 0.5) * 0.3;
+                    this.opacity = Math.random() * 0.5 + 0.1;
+                    this.hue = Math.random() > 0.7 ? 180 : (Math.random() > 0.5 ? 270 : 330);
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${this.hue}, 100%, 70%, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            const count = Math.min(80, Math.floor(window.innerWidth * window.innerHeight / 15000));
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+
+            function connectParticles() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            const opacity = (1 - dist / 150) * 0.15;
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(0, 245, 255, ${opacity})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                connectParticles();
+                animationId = requestAnimationFrame(animate);
+            }
+            animate();
+        })();
+
+        // ============================================
+        // ANIMATED COUNTERS
+        // ============================================
+        function animateCounter(el, target, duration = 2000, suffix = '') {
+            let start = 0;
+            const startTime = performance.now();
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(eased * target);
+                el.textContent = current.toLocaleString() + suffix;
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+
+        // Trigger counters when visible
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    if (el.id === 'stat-agents') animateCounter(el, 24);
+                    if (el.id === 'stat-tokens') animateCounter(el, 12847);
+                    if (el.id === 'stat-fps') animateCounter(el, 60);
+                    observer.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.hero-stat-value').forEach(el => observer.observe(el));
+
+        // ============================================
+        // STREAMING TEXT SIMULATION
+        // ============================================
+        (function() {
+            const text = "Based on your recent interactions, I've identified three key areas for improvement. First, your communication style tends to be overly technical when explaining concepts to stakeholders. I recommend using analogies and visual aids. Second, your time management shows improvement — you've reduced context-switching by 23% this week. Third, consider delegating the data validation tasks to the Aggregator agent for better throughput...";
+            const el = document.getElementById('streaming-text');
+            const counter = document.getElementById('stream-counter');
+            let index = 0;
+            let tokenCount = 0;
+
+            function streamToken() {
+                if (index < text.length) {
+                    const chunkSize = Math.floor(Math.random() * 3) + 1;
+                    const chunk = text.substring(index, index + chunkSize);
+                    el.textContent += chunk;
+                    index += chunkSize;
+                    tokenCount = Math.floor(index / 4);
+                    counter.textContent = tokenCount + ' tokens';
+                    
+                    const delay = Math.random() * 60 + 20;
+                    setTimeout(streamToken, delay);
+                } else {
+                    setTimeout(() => {
+                        el.textContent = '';
+                        index = 0;
+                        tokenCount = 0;
+                        streamToken();
+                    }, 3000);
+                }
+            }
+
+            // Start after a short delay
+            setTimeout(streamToken, 1500);
+        })();
+
+        // ============================================
+        // LIVE LOG SIMULATION
+        // ============================================
+        (function() {
+            const logViewer = document.getElementById('log-viewer');
+            const agents = ['orchestrator', 'coach_01', 'aggregator', 'monitor', 'summarizer'];
+            const levels = [
+                { cls: 'info', text: 'INFO', weight: 50 },
+                { cls: 'debug', text: 'DBG', weight: 25 },
+                { cls: 'warn', text: 'WARN', weight: 15 },
+                { cls: 'error', text: 'ERR', weight: 10 }
+            ];
+            const messages = {
+                info: [
+                    'Message routed successfully | latency: {lat}ms',
+                    'Token batch flushed to Redis | count: {tok}',
+                    'Agent connection verified | ping: {lat}ms',
+                    'Streaming response complete | {tok} tokens',
+                    'Workflow step completed | step {step}/8',
+                    'Context window updated | {tok} tokens remaining'
+                ],
+                debug: [
+                    'Force layout iteration #{step} | delta: 0.{lat}',
+                    'WebGL draw call | instances: {tok}',
+                    'Zustand state snapshot captured',
+                    'Worker postMessage | positions for {step} nodes'
+                ],
+                warn: [
+                    'Token rate approaching limit | {tok}/min',
+                    'Memory usage above 80% threshold',
+                    'Retry attempt {step}/3 for external API',
+                    'Connection latency spike | {lat}ms > threshold'
+                ],
+                error: [
+                    'Rate limit exceeded on LLM endpoint',
+                    'WebSocket disconnected, reconnecting...',
+                    'Failed to parse agent response | invalid JSON',
+                    'Timeout after {lat}ms waiting for agent_{step}'
+                ]
+            };
+
+            function getLevel() {
+                const r = Math.random() * 100;
+                let cumulative = 0;
+                for (const l of levels) {
+                    cumulative += l.weight;
+                    if (r < cumulative) return l;
+                }
+                return levels[0];
+            }
+
+            function addLog() {
+                const now = new Date();
+                const time = now.toTimeString().substring(0, 8);
+                const level = getLevel();
+                const agent = agents[Math.floor(Math.random() * agents.length)];
+                const msgPool = messages[level.cls];
+                let msg = msgPool[Math.floor(Math.random() * msgPool.length)];
+                msg = msg.replace('{lat}', Math.floor(Math.random() * 500 + 50));
+                msg = msg.replace('{tok}', Math.floor(Math.random() * 2000 + 100));
+                msg = msg.replace('{step}', Math.floor(Math.random() * 8 + 1));
+
+                const line = document.createElement('div');
+                line.className = 'log-line';
+                line.innerHTML = `
+                    <span class="log-time">${time}</span>
+                    <span class="log-level ${level.cls}">${level.text}</span>
+                    <span class="log-source">[${agent}]</span>
+                    <span class="log-msg">${msg}</span>
+                `;
+                logViewer.appendChild(line);
+                logViewer.scrollTop = logViewer.scrollHeight;
+
+                // Keep only last 30 logs
+                while (logViewer.children.length > 30) {
+                    logViewer.removeChild(logViewer.firstChild);
+                }
+            }
+
+            setInterval(addLog, 2500 + Math.random() * 2000);
+        })();
+
+        // ============================================
+        // LIVE METRIC UPDATES
+        // ============================================
+        (function() {
+            const metricTokens = document.getElementById('metric-tokens');
+            let tokens = 12847;
+            setInterval(() => {
+                tokens += Math.floor(Math.random() * 50 + 5);
+                if (metricTokens) metricTokens.textContent = tokens.toLocaleString();
+            }, 1500);
+
+            const throughput = document.getElementById('throughput-value');
+            setInterval(() => {
+                const val = 2500 + Math.floor(Math.random() * 700);
+                if (throughput) throughput.textContent = val.toLocaleString();
+            }, 2000);
+        })();
+
+        // ============================================
+        // CUSTOM DROPDOWN INTERACTION
+        // ============================================
+        document.querySelectorAll('.custom-select').forEach(select => {
+            const trigger = select.querySelector('.custom-select-trigger');
+            const dropdown = select.querySelector('.custom-select-dropdown');
+            const options = select.querySelectorAll('.custom-select-option');
+            const triggerLabel = select.querySelector('.custom-select-trigger-label');
+            const triggerIcon = select.querySelector('.custom-select-trigger-icon');
+            const triggerBadge = select.querySelector('.custom-select-trigger-badge');
+
+            // Toggle dropdown
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Close other open selects
+                document.querySelectorAll('.custom-select.open').forEach(s => {
+                    if (s !== select) s.classList.remove('open');
+                });
+                select.classList.toggle('open');
+            });
+
+            // Keyboard support on trigger
+            trigger.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    trigger.click();
+                } else if (e.key === 'Escape') {
+                    select.classList.remove('open');
+                }
+            });
+
+            // Select option
+            options.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Remove selected from all
+                    options.forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+
+                    // Update trigger content
+                    const name = option.querySelector('.custom-select-option-name').textContent;
+                    triggerLabel.textContent = name;
+
+                    // Update trigger icon
+                    if (triggerIcon && option.dataset.icon) {
+                        triggerIcon.textContent = option.dataset.icon;
+                        triggerIcon.style.background = option.dataset.iconBg;
+                        triggerIcon.style.color = option.dataset.iconColor;
+                        triggerIcon.style.border = `1px solid ${option.dataset.iconBorder}`;
+                    }
+
+                    // Update trigger badge
+                    if (triggerBadge && option.dataset.badge) {
+                        triggerBadge.textContent = option.dataset.badge;
+                        triggerBadge.style.background = option.dataset.badgeBg;
+                        triggerBadge.style.color = option.dataset.badgeColor;
+                        triggerBadge.style.border = `1px solid ${option.dataset.badgeBorder}`;
+                    }
+
+                    // Close dropdown
+                    select.classList.remove('open');
+                });
+            });
+        });
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.custom-select.open').forEach(s => {
+                s.classList.remove('open');
+            });
+        });
+
+        // ============================================
+        // NAV TAB INTERACTION
+        // ============================================
+        document.querySelectorAll('.nav-tabs').forEach(tabs => {
+            tabs.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                });
+            });
+        });
+
+        // ============================================
+        // SMOOTH SCROLL REVEAL
+        // ============================================
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+            revealObserver.observe(section);
+        });
+    </script>
+</body>
+</html>
